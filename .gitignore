@@ -1,0 +1,29 @@
+# Maven
+target/
+*.jar
+*.war
+*.ear
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Build
+build/
+.gradle/
+
+# Node
+node_modules/
+package-lock.json
+
+# Environment
+.env
+db.properties
