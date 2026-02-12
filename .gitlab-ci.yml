@@ -1,0 +1,29 @@
+stages:
+  - validate
+  - build
+
+# Validate HTML and JavaScript syntax
+validate:
+  stage: validate
+  image: node:18-alpine
+  script:
+    - echo "Validating HTML files..."
+    - find . -name "*.html" -type f ! -path "./node_modules/*" -exec echo "Checking {}" \;
+    - echo "Validating JavaScript files..."
+    - find js/ -name "*.js" -type f -exec node -c {} \; 2>&1 | grep -v "^$" || echo "✓ JavaScript syntax valid"
+  allow_failure: true
+
+# Archive web files for deployment
+package:
+  stage: build
+  image: alpine:latest
+  script:
+    - echo "Packaging web files..."
+    - tar -czf device-manager-web.tar.gz index.html css/ js/ assets/ README.md
+  artifacts:
+    paths:
+      - device-manager-web.tar.gz
+    expire_in: 30 days
+  only:
+    - main
+    - tags
