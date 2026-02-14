@@ -97,6 +97,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const anyOpen = document.querySelectorAll('.modal.show').length > 0;
         if (!anyOpen) loadDevices();
     }, 30_000);
+
+    // Keyboard shortcuts: N = new device, / = focus search
+    document.addEventListener('keydown', (e) => {
+        if (e.target.matches('input, textarea, select')) return;
+        if (e.key === 'n' || e.key === 'N') {
+            openCreateModal();
+        } else if (e.key === '/') {
+            e.preventDefault();
+            document.getElementById('search-input').focus();
+        }
+    });
 });
 
 // ---------------------------------------------------------------------------
@@ -104,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ---------------------------------------------------------------------------
 
 async function loadDevices() {
+    document.getElementById('table-content').classList.add('table-loading');
     try {
         const data = await getDevices({
             page:      state.page,
@@ -117,6 +129,8 @@ async function loadDevices() {
 
         state.totalPages = data.totalPages ?? 0;
         state.totalItems = data.totalElements ?? 0;
+
+        document.title = `Device Manager — Devices (${state.totalItems})`;
 
         const countEl = document.getElementById('device-count');
         if (countEl) {
@@ -133,6 +147,8 @@ async function loadDevices() {
                 Failed to load devices.<br>
                 <small class="text-muted">${err.message}</small>
             </div>`;
+    } finally {
+        document.getElementById('table-content').classList.remove('table-loading');
     }
 }
 

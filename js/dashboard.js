@@ -32,6 +32,7 @@ async function loadDashboard() {
     try {
         const stats = await getStats();
         renderStatCards(stats);
+        document.title = `Device Manager — Dashboard (${stats.byStatus?.ACTIVE ?? 0} active)`;
         renderCharts(stats);
         renderActivity(stats);
         document.getElementById('last-refreshed').textContent =
