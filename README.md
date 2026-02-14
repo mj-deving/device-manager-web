@@ -1,126 +1,154 @@
-# Device Manager Web
+# Device Manager Web — Project 3
 
-Web dashboard for device management. Consumes the same REST API as Project 2 (device-manager).
+[![Live](https://img.shields.io/badge/live-213.199.32.18-brightgreen)](http://213.199.32.18/)
 
-## Project 3 - Learning Goals
+A responsive web dashboard for managing IT devices. Consumes the [device-manager REST API](https://github.com/mj-deving/device-manager) (Project 2) and mirrors its JavaFX client with a browser-based interface.
 
-Build modern web skills:
-- Vanilla JavaScript (no frameworks - understand fundamentals)
-- Bootstrap 5 responsive design
-- REST API consumption with Fetch API
-- Dynamic DOM manipulation
-- Client-side state management
-- Responsive/mobile-first design
-- Data visualization (Chart.js)
+Built with zero build tools — no webpack, no npm, no transpilation. Just HTML, CSS, and JavaScript served as static files by nginx.
 
-## Tech Stack
+---
 
-- **Frontend:** HTML5, CSS3, Vanilla JavaScript
-- **UI Framework:** Bootstrap 5
-- **Charts:** Chart.js
-- **API:** REST (consumes device-manager-server)
-- **Backend:** Static files served by nginx
+## Screenshots
+
+| Desktop (Dashboard) | Mobile (Devices) |
+|---|---|
+| ![Desktop dashboard](screenshots/desktop-dashboard.png) | ![Mobile devices](screenshots/mobile-devices.png) |
+
+---
 
 ## Features
 
-- **Dashboard:** Statistics cards, charts, overview
-- **Devices List:** Table with search, filter, sort, pagination
-- **Device Details:** Modal with full information and logs
-- **CRUD:** Create, Edit, Delete devices via forms
-- **Real-time Updates:** Auto-refresh every 30 seconds
-- **Responsive Design:** Works on desktop, tablet, mobile
-- **Toast Notifications:** User feedback for actions
-- **Keyboard Shortcuts:** N=New, /=Search, Esc=Close
+- **Login** — Basic Auth credentials validated against the live API; session stored in `sessionStorage` (clears on tab close)
+- **Dashboard** — Stat cards (total, active, maintenance, decommissioned) + Chart.js doughnut and horizontal bar charts, recent activity feed
+- **Devices table** — Full-text search, status/type filters, multi-column sort, server-side pagination with smart ellipsis
+- **CRUD** — Add/edit device modal with Bootstrap 5 validation; inline status quick-edit; delete with confirmation
+- **Audit logs** — Per-device log history in a scrollable modal
+- **Auto-refresh** — Background poll every 30 s (pauses while any modal is open)
+- **Toast notifications** — Success/error feedback for every mutating action
+- **Keyboard shortcuts** — `N` = new device, `/` = focus search, `Esc` = close modal
+- **Responsive** — Sidebar collapses to hamburger at 768px; toolbar stacks vertically at 480px
 
-## Quick Start
+---
 
-### Prerequisites
-- Modern web browser
-- nginx serving static files
-- device-manager-server running on localhost:8080 or remote VPS
+## Tech Stack
 
-### Local Development
+| Layer | Tech |
+|---|---|
+| Structure | HTML5 (3 pages) |
+| Styles | Bootstrap 5.3 + custom `css/app.css` |
+| Behaviour | Vanilla JavaScript ES2020 (5 modules) |
+| Charts | Chart.js 4 |
+| Icons | Bootstrap Icons |
+| Served by | nginx 1.24 (static files + reverse proxy) |
 
-1. Serve files with Python:
-```bash
-python3 -m http.server 8000
-```
+No build step. Open any `.html` file in a browser and it works.
 
-2. Open browser:
-```
-http://localhost:8000
-```
-
-3. Update API endpoint in config (if needed)
-
-### Production Deployment
-
-Copy files to `/var/www/portfolio`:
-```bash
-cp -r * /var/www/portfolio/
-```
-
-nginx will serve and proxy API calls to `/api/`.
+---
 
 ## Project Structure
 
 ```
 device-manager-web/
-├── index.html                 # Main dashboard
+├── index.html              # Login page
+├── dashboard.html          # Stats + charts
+├── devices.html            # Device table (CRUD)
 ├── css/
-│   ├── style.css             # Custom styles
-│   └── responsive.css        # Mobile/tablet styles
+│   └── app.css             # All custom styles (~425 lines)
 ├── js/
-│   ├── app.js               # Main app logic
-│   ├── api.js               # API service
-│   ├── ui.js                # UI components
-│   ├── utils.js             # Helper functions
-│   └── config.js            # Configuration
-├── assets/
-│   ├── icons/
-│   ├── fonts/
-│   └── images/
-└── README.md
+│   ├── api.js              # Fetch wrapper + all API calls (apiFetch, getDevices, …)
+│   ├── auth.js             # Login, logout, requireAuth, getAuthHeader
+│   ├── dashboard.js        # Stat cards, Chart.js charts, activity table
+│   ├── devices.js          # Table render, sort/filter/paginate, CRUD modals
+│   └── utils.js            # formatDate, statusBadge, typeIcon, showToast, …
+├── nginx/
+│   └── vps-apps.conf       # nginx config (source of truth for VPS routing)
+├── screenshots/
+│   ├── desktop-dashboard.png
+│   └── mobile-devices.png
+└── deploy.sh               # One-command deploy to VPS
 ```
 
-## API Integration
+---
 
-Communicates with device-manager-server:
+## Quick Start (Local)
 
-```
-GET  /api/v1/devices              - List devices
-POST /api/v1/devices              - Create device
-GET  /api/v1/devices/{id}         - Get device
-PUT  /api/v1/devices/{id}         - Update device
-DELETE /api/v1/devices/{id}       - Delete device
-GET  /api/v1/devices/{id}/logs    - Device logs
-GET  /api/v1/stats                - Statistics
+Serve with Python's built-in HTTP server (any port):
+
+```bash
+python3 -m http.server 8000
 ```
 
-## Configuration
+Then open `http://localhost:8000`. The app points at the live VPS API (`http://213.199.32.18/api/v1`), so you need a network connection and valid credentials.
 
-Edit `js/config.js` to change API endpoint:
+> **Note**: `file://` won't work due to CORS — you need an HTTP server even locally.
 
-```javascript
-const CONFIG = {
-    API_BASE_URL: 'http://localhost:8080',  // Development
-    // API_BASE_URL: 'https://yourdomain.com',  // Production
-    REFRESH_INTERVAL: 30000,  // 30 seconds
-};
+---
+
+## Deployment
+
+One command from the repo root (requires clean working tree):
+
+```bash
+./deploy.sh
 ```
 
-## Browser Support
+What it does:
+1. Checks for uncommitted changes (fails if dirty)
+2. Pushes to GitHub
+3. `scp`s all HTML/CSS/JS to `/var/www/portfolio/` on the VPS
+4. Smoke-tests the live URL (HTTP 200 check)
+5. Creates and pushes a timestamped deploy tag (`deploy/web-YYYYMMDD-HHMM`)
 
-- Chrome/Edge: Latest 2 versions
-- Firefox: Latest 2 versions
-- Safari: Latest 2 versions
-- Mobile browsers: iOS Safari 12+, Chrome Mobile
+Manual equivalent:
 
-## Next Steps
+```bash
+scp index.html dashboard.html devices.html dev@vps:/var/www/portfolio/
+scp css/app.css dev@vps:/var/www/portfolio/css/
+scp js/*.js dev@vps:/var/www/portfolio/js/
+```
 
-After this project:
-- ✓ Vanilla JavaScript mastery
-- ✓ Bootstrap responsive design
-- ✓ REST API consumption
-- ✓ Modern web development fundamentals
-- ✓ Ready for Project 4 (advanced architecture)
+---
+
+## API Endpoints Used
+
+All requests go through `apiFetch()` in `api.js`, which injects the `Authorization: Basic …` header automatically.
+
+| Method | Path | Used by |
+|--------|------|---------|
+| `GET` | `/api/v1/devices` | Device table (paginated, filtered, sorted) |
+| `GET` | `/api/v1/devices/{id}` | Edit modal pre-fill |
+| `POST` | `/api/v1/devices` | Create device |
+| `PUT` | `/api/v1/devices/{id}` | Update device |
+| `PATCH` | `/api/v1/devices/{id}/status` | Status quick-change |
+| `DELETE` | `/api/v1/devices/{id}` | Delete device |
+| `GET` | `/api/v1/devices/{id}/logs` | Audit log modal |
+| `GET` | `/api/v1/stats` | Dashboard cards + charts |
+
+---
+
+## Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| `N` | Open "Add Device" modal |
+| `/` | Focus the search box |
+| `Esc` | Close open modal (Bootstrap built-in) |
+
+---
+
+## Learning Goals
+
+See [LEARNING.md](LEARNING.md) for a deep-dive into the patterns demonstrated in this project:
+Fetch API & async/await, DOM manipulation, client-side state management, CSS layout,
+Bootstrap 5 integration, Chart.js, and browser authentication.
+
+---
+
+## Part of the Portfolio
+
+| # | Project | Tech |
+|---|---------|------|
+| 1 | [device-inventory-cli](https://github.com/mj-deving/device-inventory-cli) | Java CLI, JDBC, HikariCP |
+| 2 | [device-manager](https://github.com/mj-deving/device-manager) | Spring Boot, JavaFX 21 |
+| **3** | **device-manager-web** (this repo) | **HTML/CSS/JS, Bootstrap 5, Chart.js** |
+| 4 | [arcade-hub](https://github.com/mj-deving/arcade-hub) | Spring Boot, WebSocket |
