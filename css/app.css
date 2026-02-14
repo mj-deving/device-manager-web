@@ -1,0 +1,394 @@
+/* app.css — Custom overrides on top of Bootstrap 5 */
+
+/* =========================================================
+   Layout: Fixed sidebar + scrollable main content
+   ========================================================= */
+
+body {
+    background-color: #f0f2f5;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Sidebar */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    background: #1a1d23;
+    color: #c9cdd4;
+    overflow-y: auto;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+}
+
+#sidebar .sidebar-brand {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#sidebar .sidebar-brand h5 {
+    color: #fff;
+    margin: 0;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+#sidebar .sidebar-brand .brand-icon {
+    color: #4e9af1;
+    font-size: 1.4rem;
+}
+
+/* Nav links */
+#sidebar .nav-link {
+    color: #9ba3af;
+    padding: 0.65rem 1.5rem;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    transition: color 0.15s, background 0.15s;
+}
+
+#sidebar .nav-link:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+}
+
+#sidebar .nav-link.active {
+    color: #fff;
+    background: rgba(78, 154, 241, 0.18);
+    border-left: 3px solid #4e9af1;
+}
+
+#sidebar .nav-link i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+/* Sidebar footer: logged-in user + logout */
+#sidebar .sidebar-footer {
+    margin-top: auto;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.82rem;
+    color: #6b7280;
+}
+
+#sidebar .sidebar-footer .user-name {
+    color: #c9cdd4;
+    font-weight: 600;
+}
+
+/* =========================================================
+   Main content area
+   ========================================================= */
+
+#main-content {
+    margin-left: 240px;
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+/* Top bar inside main */
+.page-header {
+    margin-bottom: 1.75rem;
+}
+
+.page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e2328;
+    margin: 0;
+}
+
+.page-header .subtitle {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+}
+
+/* =========================================================
+   Stat cards
+   ========================================================= */
+
+.stat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    transition: box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.stat-card .stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #1e2328;
+}
+
+.stat-card .stat-label {
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin-top: 0.2rem;
+}
+
+/* Icon background colours */
+.icon-blue   { background: rgba(78,154,241,0.12); color: #4e9af1; }
+.icon-green  { background: rgba(34,197,94,0.12);  color: #22c55e; }
+.icon-amber  { background: rgba(245,158,11,0.12); color: #f59e0b; }
+.icon-red    { background: rgba(239,68,68,0.12);  color: #ef4444; }
+
+/* =========================================================
+   Charts + tables cards
+   ========================================================= */
+
+.card-custom {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    padding: 1.5rem;
+}
+
+.card-custom .card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e2328;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* =========================================================
+   Device table
+   ========================================================= */
+
+.table-custom thead th {
+    background: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.table-custom thead th.sortable {
+    cursor: pointer;
+}
+
+.table-custom thead th.sortable:hover {
+    background: #eef0f2;
+    color: #1e2328;
+}
+
+.table-custom thead th .sort-icon {
+    opacity: 0.4;
+    margin-left: 4px;
+    font-size: 0.75rem;
+}
+
+.table-custom thead th.sort-asc  .sort-icon,
+.table-custom thead th.sort-desc .sort-icon {
+    opacity: 1;
+    color: #4e9af1;
+}
+
+.table-custom tbody tr:hover {
+    background: #f8fbff;
+}
+
+.table-custom .action-btn {
+    padding: 0.2rem 0.45rem;
+    font-size: 0.85rem;
+    line-height: 1.2;
+}
+
+/* =========================================================
+   Toolbar (search + filters)
+   ========================================================= */
+
+.toolbar {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    margin-bottom: 1.25rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.toolbar .search-input {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* =========================================================
+   Pagination
+   ========================================================= */
+
+.pagination .page-link {
+    color: #4e9af1;
+    border-color: #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #4e9af1;
+    border-color: #4e9af1;
+    color: #fff;
+}
+
+/* =========================================================
+   Login page
+   ========================================================= */
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+.login-brand {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-brand .brand-icon {
+    font-size: 3rem;
+    color: #4e9af1;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.login-brand h2 {
+    font-weight: 700;
+    color: #1e2328;
+    margin: 0;
+}
+
+.login-brand p {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+/* =========================================================
+   Toast container
+   ========================================================= */
+
+#toast-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 360px;
+}
+
+/* =========================================================
+   Responsive: collapse sidebar on small screens
+   ========================================================= */
+
+@media (max-width: 768px) {
+    #sidebar {
+        transform: translateX(-100%);
+    }
+
+    #sidebar.show {
+        transform: translateX(0);
+    }
+
+    #main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    /* Hamburger button shown on mobile */
+    #hamburger {
+        display: flex !important;
+    }
+}
+
+/* Hamburger hidden by default (desktop) */
+#hamburger {
+    display: none;
+}
+
+/* Overlay behind sidebar on mobile */
+#sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 999;
+}
+
+#sidebar-overlay.show {
+    display: block;
+}
+
+/* =========================================================
+   Utility
+   ========================================================= */
+
+.text-truncate-cell {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: #6b7280;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #9ba3af;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}

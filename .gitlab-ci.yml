@@ -25,5 +25,5 @@ package:
       - device-manager-web.tar.gz
     expire_in: 30 days
   only:
-    - main
+    - master
     - tags

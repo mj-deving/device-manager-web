@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  validate-and-package:
+    name: Validate & Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: |
+          echo "Checking JS syntax with Node.js built-in parser..."
+          for f in js/*.js; do
+            node --check "$f" && echo "  OK: $f"
+          done
+
+      - name: Validate HTML structure (basic)
+        run: |
+          echo "Checking HTML files exist and are non-empty..."
+          for f in index.html dashboard.html devices.html; do
+            [ -s "$f" ] && echo "  OK: $f" || (echo "MISSING or empty: $f" && exit 1)
+          done
+
+      - name: Package artifact
+        run: |
+          tar -czf device-manager-web.tar.gz \
+            index.html dashboard.html devices.html \
+            css/ js/ README.md
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: device-manager-web
+          path: device-manager-web.tar.gz
+          retention-days: 30
