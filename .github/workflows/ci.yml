@@ -41,3 +41,28 @@ jobs:
           name: device-manager-web
           path: device-manager-web.tar.gz
           retention-days: 30
+
+  deploy:
+    name: Deploy to VPS
+    needs: validate-and-package
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    environment: production
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 213.199.32.18
+          username: dev
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /home/dev/projects/device-manager-web
+            git pull origin master
+            sudo cp -r index.html dashboard.html devices.html css/ js/ /var/www/portfolio/
+            sudo chown -R www-data:www-data /var/www/portfolio/
+
+      - name: Health check
+        run: |
+          curl -sf http://213.199.32.18/health || exit 1
+          echo "Health check passed"
