@@ -136,6 +136,18 @@ All requests go through `apiFetch()` in `api.js`, which injects the `Authorizati
 
 ---
 
+## Development Workflow
+
+- **Issue tracking** via GitHub Issues and GitLab Boards (Kanban-style)
+- **Conventional commits** (`feat:`, `fix:`, `docs:`, `refactor:`)
+- **Automated deployment** via `deploy.sh` (push, scp, smoke-test, tag)
+- **Dual-remote** repository (GitHub + GitLab)
+- **AI-assisted development** with Claude Code (~80% implementation, human architecture decisions)
+
+**IDE:** Open project folder directly in Eclipse, VS Code, or any editor — no build step or project configuration needed.
+
+---
+
 ## Learning Goals
 
 See [LEARNING.md](LEARNING.md) for a deep-dive into the patterns demonstrated in this project:
